@@ -29,7 +29,7 @@ namespace PricingSpec
         [When(@"I request the Product Price")]
         public void WhenIRequestTheProductPrice()
         {
-            returnPrice = _productPriceController.Get(_selectedProducts[0]);
+            returnPrice = _productPriceController.GetProductPrice(_selectedProducts[0]);
         }
 
         [Then(@"The returned price should be (.*)")]
@@ -41,7 +41,7 @@ namespace PricingSpec
         [When(@"I request the Total Price")]
         public void WhenIRequestTheTotalPrice()
         {
-            returnPrice = _productPriceController.Get(_selectedProducts);
+            returnPrice = _productPriceController.GetProductPrices(_selectedProducts);
         }
 
 

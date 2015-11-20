@@ -20,13 +20,14 @@ namespace PricingPrototype.Controllers
         }
 
         // GET api/productprice/5
-        public int Get(string productName)
+        [HttpGet]
+        public int GetProductPrice(string productName)
         {
 
             return products[productName];
         }
-
-        public int Get(IEnumerable<string> productNames)
+/*
+        public int GetProductPrices(IEnumerable<string> productNames)
         {
             int returnPrice = 0;
 
@@ -38,6 +39,7 @@ namespace PricingPrototype.Controllers
             return returnPrice;
 
         }
+ */ 
 /*
         // POST api/productprice
         public void Post([FromBody]string value)
