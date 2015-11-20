@@ -128,13 +128,18 @@
     <ItemGroup>
       <PackageFiles Include="WebDeploy.msbuild"/>
       <PackageFiles Include="CommandPrompt.bat"/>
+      <PackageFiles Include="deployWebApp.ps1"/>
     </ItemGroup>
     <ItemGroup>
       <AzureScripts Include="PowershellScripts\*.*"/>
     </ItemGroup>
+    <ItemGroup>
+      <PublishFiles Include="PublishFiles\*.*"/>
+    </ItemGroup>
     <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(BuildArtifactsDir)\%(RecursiveDir)"></Copy>
     <Copy SourceFiles="@(AzureScripts)" DestinationFolder="$(BuildArtifactsDir)\PowershellScripts"></Copy>
     <Copy SourceFiles="DeploymentInstructions.txt" DestinationFiles="$(BuildArtifactsDir)\Deploy_$(VersionNumber).txt"></Copy>
+    <Copy SourceFiles="@(PublishFiles)" DestinationFolder="$(BuildArtifactsDir)\PublishProfiles"></Copy>
   </Target>
 
   <Target Name="_TransformWebConfigs">

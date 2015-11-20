@@ -12,7 +12,10 @@
     <WebApp Condition=" '$(WebApp)' == '' ">PricingPrototype.Web</WebApp>
     <ApiApp Condition=" '$(ApiApp)' == '' ">PricingPrototype</ApiApp>
     <WorkingDir Condition=" '$(WorkingDir)' == '' ">$(MSBuildThisFileDirectory)</WorkingDir>
+<!--
     <BuildArtifactsPath Condition=" '$(BuildArtifactsPath)' == '' ">BuildArtifacts\</BuildArtifactsPath>
+-->    
+    <BuildArtifactsPath Condition=" '$(BuildArtifactsPath)' == '' "></BuildArtifactsPath>
 
     <!-- Azure settings stolen from the .PublishSettings file -->
     <AzureUsername Condition=" '$(AzureUsername)' == '' ">$deployme-dev</AzureUsername>
@@ -35,6 +38,7 @@
 
   <!-- For MsBuild-MsDeploy and credentials in build files -->
   <Target Name="MsDeployToDev">
+    <Message Text="Deploying with buildArtifactsPath=$(BuildArtifactsPath)"/>
     <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployWebPackage" Properties='AzureUrl=master-builders-web.scm.azurewebsites.net;AzureSite=master-builders-web;AzureUsername=$master-builders-web;AzurePassword="Hx3eRnYqhhNAn2RKnvdglQyBF4Wu1SQrcd1yfRwpwc6DevourwADb8gtCtAo";Configuration=Release'/>
     <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployApiPackage" Properties='AzureUrl=master-builders-api.scm.azurewebsites.net;AzureSite=master-builders-api;AzureUsername=$master-builders-api;AzurePassword="wJFDBoNrpd67xyoda691t3Si7l2TwnB5dPxlb3RZqejafiiN2djPMrvwhK11";Configuration=Release'/>
   </Target>
