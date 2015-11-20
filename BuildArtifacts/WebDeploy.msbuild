@@ -10,6 +10,7 @@
     <AzurePublishProfilesPath Condition=" '$(AzurePublishProfilesPath)'=='' ">PublishProfiles</AzurePublishProfilesPath>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <WebApp Condition=" '$(WebApp)' == '' ">PricingPrototype.Web</WebApp>
+    <ApiApp Condition=" '$(ApiApp)' == '' ">PricingPrototype</ApiApp>
     <WorkingDir Condition=" '$(WorkingDir)' == '' ">$(MSBuildThisFileDirectory)</WorkingDir>
     <BuildArtifactsPath Condition=" '$(BuildArtifactsPath)' == '' ">BuildArtifacts\</BuildArtifactsPath>
 
@@ -33,13 +34,19 @@
 
   <!-- For MsBuild-MsDeploy and credentials in build files -->
   <Target Name="MsDeployToDev">
-    <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployPackage" Properties='AzureUrl=master-builders-web.scm.azurewebsites.net;AzureSite=master-builders-web;AzureUsername=$master-builders-web;AzurePassword="Hx3eRnYqhhNAn2RKnvdglQyBF4Wu1SQrcd1yfRwpwc6DevourwADb8gtCtAo";Configuration=Release'/>
-    <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployPackage" Properties='AzureUrl=master-builders-api.scm.azurewebsites.net;AzureSite=master-builders-api;AzureUsername=$master-builders-api;AzurePassword="wJFDBoNrpd67xyoda691t3Si7l2TwnB5dPxlb3RZqejafiiN2djPMrvwhK11";Configuration=Release'/>
+    <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployWebPackage" Properties='AzureUrl=master-builders-web.scm.azurewebsites.net;AzureSite=master-builders-web;AzureUsername=$master-builders-web;AzurePassword="Hx3eRnYqhhNAn2RKnvdglQyBF4Wu1SQrcd1yfRwpwc6DevourwADb8gtCtAo";Configuration=Release'/>
+    <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployApiPackage" Properties='AzureUrl=master-builders-api.scm.azurewebsites.net;AzureSite=master-builders-api;AzureUsername=$master-builders-api;AzurePassword="wJFDBoNrpd67xyoda691t3Si7l2TwnB5dPxlb3RZqejafiiN2djPMrvwhK11";Configuration=Release'/>
   </Target>
 
   <!-- Direct MsBuild-MsDeploy call -->
-  <Target Name="MsDeployPackage">
+  <Target Name="MsDeployWebPackage">
     <Exec Command='$(MsDeployExe) -source:package="$(BuildArtifactsPath)$(WebApp)\$(WebApp).zip" -dest:auto,ComputerName="https://$(AzureUrl)/msdeploy.axd?site=$(AzureSite)",UserName="$(AzureUsername)",Password="$(AzurePassword)",IncludeAcls="False",AuthType="Basic" -verb:sync -setParam:name="IIS Web Application Name",value="$(AzureSite)" -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -retryAttempts=2 -verbose -userAgent="VS12.0:PublishDialog:WTE12.3.51016.0"'/>
+    <!--<CallTarget Targets="_DeployWebConfig" />-->
+  </Target>
+
+  <!-- Direct MsBuild-MsDeploy call -->
+  <Target Name="MsDeployApiPackage">
+    <Exec Command='$(MsDeployExe) -source:package="$(BuildArtifactsPath)$(ApiApp)\$(ApiApp).zip" -dest:auto,ComputerName="https://$(AzureUrl)/msdeploy.axd?site=$(AzureSite)",UserName="$(AzureUsername)",Password="$(AzurePassword)",IncludeAcls="False",AuthType="Basic" -verb:sync -setParam:name="IIS Web Application Name",value="$(AzureSite)" -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -retryAttempts=2 -verbose -userAgent="VS12.0:PublishDialog:WTE12.3.51016.0"'/>
     <!--<CallTarget Targets="_DeployWebConfig" />-->
   </Target>
 

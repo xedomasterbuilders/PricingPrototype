@@ -18,6 +18,6 @@ $msDeployPackageCommand = "`"$msDeployExe`" -source:package=`"$packageFolderPath
 cmd.exe /c "`"$msDeployPackageCommand`"";
 
 #MsDeploy config file "web.configuration.config"
-$msDeployConfigCommand = "`"$msDeployExe`" -source:contentPath=`"$packageFolderPath\Configs\Web.$configuration.config`" -dest:contentPath=`"$azureSite\web.config`",ComputerName=`"https://$azureUrl/msdeploy.axd?site=$azureSite`",UserName=`"$azureUsername`",Password=`"$azurePassword`",IncludeAcls=`"False`",AuthType=`"Basic`" -verb:sync -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -retryAttempts=2 -verbose -userAgent=`"VS12.0:PublishDialog:WTE12.3.51016.0`"";
+#$msDeployConfigCommand = "`"$msDeployExe`" -source:contentPath=`"$packageFolderPath\Configs\Web.$configuration.config`" -dest:contentPath=`"$azureSite\web.config`",ComputerName=`"https://$azureUrl/msdeploy.axd?site=$azureSite`",UserName=`"$azureUsername`",Password=`"$azurePassword`",IncludeAcls=`"False`",AuthType=`"Basic`" -verb:sync -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -retryAttempts=2 -verbose -userAgent=`"VS12.0:PublishDialog:WTE12.3.51016.0`"";
 #Write-Output ("MsDeploy Command: " + $msDeployConfigCommand);
-cmd.exe /c "`"$msDeployConfigCommand`"";
+#cmd.exe /c "`"$msDeployConfigCommand`"";
