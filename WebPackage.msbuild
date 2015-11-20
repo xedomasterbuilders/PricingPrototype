@@ -61,7 +61,7 @@
 
 
   <!-- Build the solution -->
-  <Target Name="Build" DependsOnTargets="CleanAll">
+  <Target Name="Build">
     <Message Text="Compiling version $(BUILD_NUMBER)"/>
     <Exec Command='$(MSBuildExe) $(SolutionName).sln /t:Build /p:Configuration=$(Configuration)'/>
     <!-- Double-check, but this does work -->
