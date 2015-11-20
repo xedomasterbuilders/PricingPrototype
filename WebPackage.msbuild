@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- MsBuild script for using MS Web Deploy - must be run as admin! -->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll"/>
+  <PropertyGroup>
+<!--    
+    <MSBuildExe Condition=" '$(MSBuildExe)'=='' ">C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe</MSBuildExe>
+    <MSDeployExe Condition=" '$(MSDeployExe)'=='' ">"C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe"</MSDeployExe>
+
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <SolutionName Condition=" '$(SolutionName)' == '' ">PricingPrototype</SolutionName>
+    <WebApp Condition=" '$(WebApp)' == '' ">PricingPrototypeWeb</WebApp>
+    <ApiApp Condition=" '$(ApiApp)' == '' ">PricingPrototype</ApiApp>
+    <WorkingDir Condition=" '$(WorkingDir)' == '' ">$(MSBuildThisFileDirectory)</WorkingDir>
+    <PackageAssemblyDir Condition=" '$(PackageAssemblyDir)' == '' ">DeployableWebApp\ReleasePackage</PackageAssemblyDir>
+    <BuildArtifactsDir Condition=" '$(BuildArtifactsDir)' == '' ">BuildArtifacts</BuildArtifactsDir>
+    <PublishProfileWeb Condition=" '$(PublishProfileDeploy)' == '' ">azure-publish-dev</PublishProfileWeb>
+    <PublishProfilePackage Condition=" '$(PublishProfilePackage)' == '' ">azure-package</PublishProfilePackage>
+-->
+    <!-- Tools -->
+    <MSBuildPath Condition=" '$(MSBuildPath)'=='' ">C:\Windows\Microsoft.NET\Framework\v4.0.30319</MSBuildPath>
+    <MSBuildExe Condition=" '$(MSBuildExe)'=='' ">C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe</MSBuildExe>
+    <MSDeployExe Condition=" '$(MSDeployExe)'=='' ">C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe</MSDeployExe>
+    <CompassExe Condition=" '$(CompassExe)'=='' ">c:\ruby22-x64\bin\compass.exe</CompassExe>
+
+    <BuildWorkingDirectory Condition=" '$(BuildWorkingDirectory)' == '' ">$(MSBuildThisFileDirectory)</BuildWorkingDirectory>
+
+
+    <!-- Compilation / single-step deployment test -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">Any CPU</Platform>
+    <SolutionFile Condition="'$(SolutionFile)' == ''">PricingPrototype.sln</SolutionFile>
+    <ProjectFile Condition="'$(ProjectFile)' == ''">PricingPrototype.csproj</ProjectFile>
+    <PublishProfile Condition="'$(PublishProfile)' == ''">DeploymentPackage</PublishProfile>
+    <ThemeName Condition="'$(ThemeName)' == ''">SuitUp</ThemeName>
+    <ThemeSelectSassFile Condition="'$(ThemeSelectSassFile)' == ''">_themeSelectSuitup.sass</ThemeSelectSassFile>
+
+
+    <!-- Packaging - individual application -->
+    <PublishProfilePackage Condition="'$(PublishProfilePackage)' == ''">DeploymentPackage</PublishProfilePackage>
+    <WebAppProjectDirectoryPath Condition="'$(WebAppProjectDirectoryPath)' == ''">PricingPrototype</WebAppProjectDirectoryPath>
+    <PackageAssemblyDir Condition=" '$(PackageAssemblyDir)' == '' ">ReleasePackage</PackageAssemblyDir>
+
+
+    <!-- Build Artifacts Directory - where the "packaging" process assembles all artifacts, and where the "deployment" process finds artifacts -->
+    <BuildArtifactsDir Condition=" '$(BuildArtifactsDir)' == '' ">BuildArtifacts</BuildArtifactsDir>
+    <VersionNumber Condition=" '$(VersionNumber)' == '' ">$(BUILD_NUMBER)</VersionNumber>
+
+  </PropertyGroup>
+
+
+  <Target Name="CleanAll">
+    <PropertyGroup>
+      <BinDir>$(WebApp)\bin</BinDir>
+      <ObjDir>$(WebApp)\obj</ObjDir>
+      <PackageDirA>$(PackageAssemblyDir)</PackageDirA>
+    </PropertyGroup>
+    <RemoveDir Directories="$(binDir);$(ObjDir);$(PackageDirA);$(BuildArtifactsDir)"/>
+    <Exec Command="$(MSBuildExe) $(SolutionName).sln /t:clean"/>
+  </Target>
+
+
+  <!-- Build the solution -->
+  <Target Name="Build" DependsOnTargets="CleanAll">
+    <Message Text="Compiling version $(BUILD_NUMBER)"/>
+    <Exec Command='$(MSBuildExe) $(SolutionName).sln /t:Build /p:Configuration=$(Configuration)'/>
+    <!-- Double-check, but this does work -->
+    <!--<CallTarget Targets="_SaveAssemblyInfoForReference"/>-->
+  </Target>
+
+  <!-- Use WebDeploy - use the solution's MsBuild. You could just go call this directly as a build step. -->
+  <Target Name="BuildPackage">
+    <Message Text="Building Package version $(BUILD_NUMBER)"/>
+    <CallTarget Targets="_BuildWebAppPackage"/>
+<!--    
+    <CallTarget Targets="_CopyBuildScriptsToBuildArtifacts"/>
+-->    
+  </Target>
+
+
+
+  <!-- Build ALL! Packages + deployment files. Include an entry for each web application (creating package+configs), then include general deployment files -->
+  <!-- For better build-step visibility, we may want to split into "PrepareArtifacts/scripts" and "PackageWeb", "PackageAdmin", etc... -->
+  <Target Name="BuildAllArtifacts">
+    <MakeDir Directories="$(BuildArtifactsDir)"/>
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="_BuildWebPackage" Properties="WebAppProjectDirectoryPath=PricingPrototype;ProjectFile=PricingPrototype.csproj;PublishProfilePackage=WebPackage;PackageAssemblyDir=PricingPrototype\ReleasePackage"/>
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="_BuildWebPackage" Properties="WebAppProjectDirectoryPath=PricingPrototype.Web;ProjectFile=PricingPrototype.Web.csproj;PublishProfilePackage=PricingPrototypeWeb;PackageAssemblyDir=PricingPrototype.Web\ReleasePackage"/>
+    <CallTarget Targets="_CopyBuildFilesToArtifactsDirectory"/>
+  </Target>
+
+
+  <Target Name="_BuildWebPackage">
+    <CallTarget Targets="_BuildPackage" />
+    <CallTarget Targets="_CopyPackageToArtifactsDirectory"/>
+  </Target>
+
+  <!-- Use WebDeploy to create local deployment package. You could just go call this directly as a build step. Creates src\SMT.Web\obj\Release\Package -->
+  <Target Name="_BuildPackage">
+    <MSBuild Projects="$(WebAppProjectDirectoryPath)\$(ProjectFile)" Targets="Build" Properties="VisualStudioVersion=11.0;DeployOnBuild=True;PublishProfile=$(PublishProfilePackage);ProfileTransformWebConfigEnabled=False;Configuration=$(Configuration)"/>
+    <!--
+    <CallTarget Targets="_TransformWebConfigs"/>
+    <CallTarget Targets="_CopyRobots" />
+-->    
+  </Target>
+
+
+  <Target Name="_BuildWebAppPackageUnused">
+    <Exec Command='$(MSBuildExe) PricingPrototypeWeb/PricingPrototypeWeb.csproj /t:Build /p:VisualStudioVersion=11.0 /p:DeployOnBuild=True;PublishProfile="PricingPrototypeWeb";ProfileTransformWebConfigEnabled=False;Configuration=$(Configuration)'/>
+    <Exec Command='$(MSBuildExe) PricingPrototype/PricingPrototype.csproj /t:Build /p:VisualStudioVersion=11.0 /p:DeployOnBuild=True;PublishProfile="WebPackage";ProfileTransformWebConfigEnabled=False;Configuration=$(Configuration)'/>
+
+    <!--    
+    <MSBuild Projects="$(WebApp)\$(WebApp).csproj" Targets="Build" Properties='DeployOnBuild=True;PublishProfile="$(PublishProfilePackage)";ProfileTransformWebConfigEnabled=False;Configuration=$(Configuration)'/>
+    <CallTarget Targets="_TransformWebConfigs" />
+    <CallTarget Targets="_CopyPackageToDeploymentDirectory"/>
+    <CallTarget Targets="_SaveAssemblyInfoForReference2"/>
+-->    
+  </Target>
+
+  <Target Name="_CopyPackageToArtifactsDirectory">
+    <Message Text="Copy package $(PackageAssemblyDir) to $(BuildArtifactsDir)\$(WebAppProjectDirectoryPath) WebAppProjectDirectoryPath=$(WebAppProjectDirectoryPath) ProjectFile=$(ProjectFile) PublishProfilePackage=$(PublishProfilePackage) PackageAssemblyDir=$(PackageAssemblyDir)" />
+    <ItemGroup>
+      <PackageFiles Include="$(PackageAssemblyDir)\**"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(BuildArtifactsDir)\$(WebAppProjectDirectoryPath)\%(RecursiveDir)"></Copy>
+  </Target>
+  <Target Name="_CopyBuildFilesToArtifactsDirectory">
+    <Message Text="copy build files to $(BuildArtifactsDir)"/>
+    <ItemGroup>
+      <PackageFiles Include="WebDeploy.msbuild"/>
+      <PackageFiles Include="CommandPrompt.bat"/>
+    </ItemGroup>
+    <ItemGroup>
+      <AzureScripts Include="PowershellScripts\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(BuildArtifactsDir)\%(RecursiveDir)"></Copy>
+    <Copy SourceFiles="@(AzureScripts)" DestinationFolder="$(BuildArtifactsDir)\PowershellScripts"></Copy>
+    <Copy SourceFiles="DeploymentInstructions.txt" DestinationFiles="$(BuildArtifactsDir)\Deploy_$(VersionNumber).txt"></Copy>
+  </Target>
+
+  <Target Name="_TransformWebConfigs">
+    <ItemGroup>
+      <Config Include="Debug"/>
+      <Config Include="Test"/>
+      <Config Include="Release"/>
+    </ItemGroup>
+    <MakeDir Directories="$(PackageAssemblyDir)\Configs"/>
+    <TransformXml Source="$(WebApp)\Web.config"
+                            Transform="$(WebApp)\Web.%(Config.Identity).config"
+                            Destination="$(PackageAssemblyDir)\Configs\Web.%(Config.Identity).config"
+                            StackTrace="true" />
+
+  </Target>
+
+  <Target Name="_CopyPackageToDeploymentDirectory">
+    <ItemGroup>
+      <PackageFiles Include="$(PackageAssemblyDir)\**"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(BuildArtifactsDir)\$(WebApp)\%(RecursiveDir)"></Copy>
+  </Target>
+
+  <Target Name="_CopyBuildScriptsToBuildArtifacts">
+    <ItemGroup>
+      <BuildScripts Include="WebDeploy.msbuild"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(BuildScripts)" DestinationFolder="$(BuildArtifactsDir)"></Copy>
+    <MakeDir Directories="$(BuildArtifactsDir)\powershellScripts"/>
+    <ItemGroup>
+      <PowershellScripts Include="powershellScripts\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(PowershellScripts)" DestinationFolder="$(BuildArtifactsDir)\powershellScripts"></Copy>
+  </Target>
+</Project>

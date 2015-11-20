@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- MsBuild script for using MS Web Deploy - must be run as admin! -->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll"/>
+  <PropertyGroup>
+    <MSBuildExe Condition=" '$(MSBuildExe)'=='' ">C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe</MSBuildExe>
+    <MSDeployExe Condition=" '$(MSDeployExe)'=='' ">"C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe"</MSDeployExe>
+    <PowerShellExe Condition=" '$(PowerShellExe)'=='' ">powershell.exe</PowerShellExe>
+
+    <AzurePublishProfilesPath Condition=" '$(AzurePublishProfilesPath)'=='' ">PublishProfiles</AzurePublishProfilesPath>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <WebApp Condition=" '$(WebApp)' == '' ">PricingPrototype.Web</WebApp>
+    <WorkingDir Condition=" '$(WorkingDir)' == '' ">$(MSBuildThisFileDirectory)</WorkingDir>
+    <BuildArtifactsPath Condition=" '$(BuildArtifactsPath)' == '' ">BuildArtifacts\</BuildArtifactsPath>
+
+    <!-- Azure settings stolen from the .PublishSettings file -->
+    <AzureUsername Condition=" '$(AzureUsername)' == '' ">$deployme-dev</AzureUsername>
+    <AzurePassword Condition=" '$(AzurePassword)' == '' "></AzurePassword>
+    <AzureSite Condition=" '$(AzureSite)' == '' ">deployme-dev</AzureSite>
+    <AzureUrl Condition=" '$(AzureUrl)' == '' ">deployme-dev.scm.azurewebsites.net</AzureUrl>
+
+  </PropertyGroup>
+
+
+  <Target Name="HelloWorld">
+    <Message Text="I am the thing that deploys things for $(Configuration)" />
+  </Target>
+
+  <!-- For MsBuild-Powershell-MsDeploy using local store of publish profiles -->
+  <Target Name="PsDeployToDev">
+    <Exec Command="$(PowerShellExe) -NonInteractive -ExecutionPolicy Unrestricted -File powershellScripts\deployWebApp.ps1 $(WorkingDir)$(BuildArtifactsPath)$(WebApp) $(WebApp).zip $(AzurePublishProfilesPath)\master-builders-api.azurewebsites.net.PublishSettings Debug"/>
+  </Target>
+
+  <!-- For MsBuild-MsDeploy and credentials in build files -->
+  <Target Name="MsDeployToDev">
+    <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployPackage" Properties='AzureUrl=master-builders-web.scm.azurewebsites.net;AzureSite=master-builders-web;AzureUsername=$master-builders-web;AzurePassword="Hx3eRnYqhhNAn2RKnvdglQyBF4Wu1SQrcd1yfRwpwc6DevourwADb8gtCtAo";Configuration=Release'/>
+    <MSBuild Projects="WebDeploy.msbuild" Targets="MsDeployPackage" Properties='AzureUrl=master-builders-api.scm.azurewebsites.net;AzureSite=master-builders-api;AzureUsername=$master-builders-api;AzurePassword="wJFDBoNrpd67xyoda691t3Si7l2TwnB5dPxlb3RZqejafiiN2djPMrvwhK11";Configuration=Release'/>
+  </Target>
+
+  <!-- Direct MsBuild-MsDeploy call -->
+  <Target Name="MsDeployPackage">
+    <Exec Command='$(MsDeployExe) -source:package="$(BuildArtifactsPath)$(WebApp)\$(WebApp).zip" -dest:auto,ComputerName="https://$(AzureUrl)/msdeploy.axd?site=$(AzureSite)",UserName="$(AzureUsername)",Password="$(AzurePassword)",IncludeAcls="False",AuthType="Basic" -verb:sync -setParam:name="IIS Web Application Name",value="$(AzureSite)" -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -retryAttempts=2 -verbose -userAgent="VS12.0:PublishDialog:WTE12.3.51016.0"'/>
+    <!--<CallTarget Targets="_DeployWebConfig" />-->
+  </Target>
+
+
+  <Target Name="_DeployWebConfig">
+    <Exec Command='$(MsDeployExe) -source:contentPath="$(WorkingDir)$(BuildArtifactsPath)$(WebApp)\Configs\Web.$(Configuration).config" -dest:contentPath="$(AzureSite)\web.config",ComputerName="https://$(AzureUrl)/msdeploy.axd?site=$(AzureSite)",UserName="$(AzureUsername)",Password="$(AzurePassword)",IncludeAcls="False",AuthType="Basic" -verb:sync -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -retryAttempts=2 -verbose -userAgent="VS12.0:PublishDialog:WTE12.3.51016.0"'/>
+  </Target>
+
+</Project>

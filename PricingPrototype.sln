@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PricingPrototype", "PricingPrototype\PricingPrototype.csproj", "{9A97051D-3208-4D01-B3A0-FD935E86B099}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PricingPrototype.Tests", "PricingPrototype.Tests\PricingPrototype.Tests.csproj", "{5889183C-9616-46CE-AA4D-A49E09AAB188}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PricingPrototype.Web", "PricingPrototype.Web\PricingPrototype.Web.csproj", "{7DEA7777-19A8-49B0-9340-CB3BD908CB84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PricingPrototype.Web.Tests", "PricingPrototype.Web.Tests\PricingPrototype.Web.Tests.csproj", "{F2BF6025-BFB9-4E7A-A136-E84DF86CA3D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{82D3316D-83C6-4161-98DF-2213EA35B6F3}"
+	ProjectSection(SolutionItems) = preProject
+		CommandPrompt.bat = CommandPrompt.bat
+		DeploymentInstructions.txt = DeploymentInstructions.txt
+		deployWebApp.ps1 = deployWebApp.ps1
+		PublishProfiles\master-builders-api.azurewebsites.net.PublishSettings = PublishProfiles\master-builders-api.azurewebsites.net.PublishSettings
+		PublishProfiles\master-builders-web.azurewebsites.net.PublishSettings = PublishProfiles\master-builders-web.azurewebsites.net.PublishSettings
+		WebDeploy.msbuild = WebDeploy.msbuild
+		WebPackage.msbuild = WebPackage.msbuild
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A97051D-3208-4D01-B3A0-FD935E86B099}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A97051D-3208-4D01-B3A0-FD935E86B099}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A97051D-3208-4D01-B3A0-FD935E86B099}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A97051D-3208-4D01-B3A0-FD935E86B099}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5889183C-9616-46CE-AA4D-A49E09AAB188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5889183C-9616-46CE-AA4D-A49E09AAB188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5889183C-9616-46CE-AA4D-A49E09AAB188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5889183C-9616-46CE-AA4D-A49E09AAB188}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DEA7777-19A8-49B0-9340-CB3BD908CB84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DEA7777-19A8-49B0-9340-CB3BD908CB84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DEA7777-19A8-49B0-9340-CB3BD908CB84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DEA7777-19A8-49B0-9340-CB3BD908CB84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2BF6025-BFB9-4E7A-A136-E84DF86CA3D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2BF6025-BFB9-4E7A-A136-E84DF86CA3D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2BF6025-BFB9-4E7A-A136-E84DF86CA3D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2BF6025-BFB9-4E7A-A136-E84DF86CA3D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

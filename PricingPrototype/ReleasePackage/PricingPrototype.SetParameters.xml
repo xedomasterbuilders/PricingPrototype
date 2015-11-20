@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <setParameter name="IIS Web Application Name" value="master-builders-api" />
+  <setParameter name="DefaultConnection-Web.config Connection String" value="Data Source=(LocalDb)\v11.0;Initial Catalog=aspnet-PricingPrototype-20151119161758;Integrated Security=SSPI;AttachDBFilename=|DataDirectory|\aspnet-PricingPrototype-20151119161758.mdf" />
+</parameters>
