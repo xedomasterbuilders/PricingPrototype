@@ -56,14 +56,14 @@
       <PackageDirA>$(PackageAssemblyDir)</PackageDirA>
     </PropertyGroup>
     <RemoveDir Directories="$(binDir);$(ObjDir);$(PackageDirA);$(BuildArtifactsDir)"/>
-    <Exec Command="$(MSBuildExe) $(SolutionName).sln /t:clean"/>
+    <Exec Command="$(MSBuildExe) $(SolutionFile) /t:clean"/>
   </Target>
 
 
   <!-- Build the solution -->
   <Target Name="Build">
     <Message Text="Compiling version $(BUILD_NUMBER)"/>
-    <Exec Command='$(MSBuildExe) $(SolutionName).sln /t:Build /p:Configuration=$(Configuration)'/>
+    <Exec Command='$(MSBuildExe) $(SolutionFile) /t:Build /p:Configuration=$(Configuration)'/>
     <!-- Double-check, but this does work -->
     <!--<CallTarget Targets="_SaveAssemblyInfoForReference"/>-->
   </Target>
