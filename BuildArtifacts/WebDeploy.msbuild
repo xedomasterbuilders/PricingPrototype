@@ -29,7 +29,8 @@
 
   <!-- For MsBuild-Powershell-MsDeploy using local store of publish profiles -->
   <Target Name="PsDeployToDev">
-    <Exec Command="$(PowerShellExe) -NonInteractive -ExecutionPolicy Unrestricted -File powershellScripts\deployWebApp.ps1 $(WorkingDir)$(BuildArtifactsPath)$(WebApp) $(WebApp).zip $(AzurePublishProfilesPath)\master-builders-api.azurewebsites.net.PublishSettings Debug"/>
+    <Exec Command="$(PowerShellExe) -NonInteractive -ExecutionPolicy Unrestricted -File deployWebApp.ps1 $(WorkingDir)$(BuildArtifactsPath)$(ApiApp) $(ApiApp).zip $(AzurePublishProfilesPath)\master-builders-api.azurewebsites.net.PublishSettings Release"/>
+    <Exec Command="$(PowerShellExe) -NonInteractive -ExecutionPolicy Unrestricted -File deployWebApp.ps1 $(WorkingDir)$(BuildArtifactsPath)$(WebApp) $(WebApp).zip $(AzurePublishProfilesPath)\master-builders-web.azurewebsites.net.PublishSettings Release"/>
   </Target>
 
   <!-- For MsBuild-MsDeploy and credentials in build files -->
