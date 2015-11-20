@@ -38,7 +38,7 @@ namespace PricingPrototype.Controllers
             return returnPrice;
 
         }
-
+/*
         // POST api/productprice
         public void Post([FromBody]string value)
         {
@@ -53,5 +53,6 @@ namespace PricingPrototype.Controllers
         public void Delete(int id)
         {
         }
+ */ 
     }
 }
