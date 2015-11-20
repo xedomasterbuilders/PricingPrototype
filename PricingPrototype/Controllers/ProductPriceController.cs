@@ -26,7 +26,7 @@ namespace PricingPrototype.Controllers
 
             return products[productName];
         }
-/*
+
         public int GetProductPrices(IEnumerable<string> productNames)
         {
             int returnPrice = 0;
@@ -39,7 +39,7 @@ namespace PricingPrototype.Controllers
             return returnPrice;
 
         }
- */ 
+ 
 /*
         // POST api/productprice
         public void Post([FromBody]string value)
