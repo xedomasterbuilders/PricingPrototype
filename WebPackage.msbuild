@@ -161,6 +161,7 @@
   <Target Name="_CopyBuildScriptsToBuildArtifacts">
     <ItemGroup>
       <BuildScripts Include="WebDeploy.msbuild"/>
+      <BuildScripts Include="deployWebApp.ps1"/>
     </ItemGroup>
     <Copy SourceFiles="@(BuildScripts)" DestinationFolder="$(BuildArtifactsDir)"></Copy>
     <MakeDir Directories="$(BuildArtifactsDir)\powershellScripts"/>
